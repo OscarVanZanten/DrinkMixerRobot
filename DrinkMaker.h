@@ -3,29 +3,34 @@
 
 #include "Arduino.h"
 #include "Valve.h"
+#include "Recipe.h"
 
 class DrinkMaker {
 private:
  Valve* valves;
- short* recipes;
- short recipeLength;
+ Recipe* recipes;
  
 public:
- DrinkMaker(Valve valves[], short recipeLength, short recipes[]);
+ DrinkMaker(Valve valves[], Recipe recipes[]);
  void MakeRecipe(short index);
 };
 
-DrinkMaker::DrinkMaker(Valve valves[], short recipeLength, short recipes[])
+DrinkMaker::DrinkMaker(Valve valves[], Recipe recipes[])
 {
   this->valves = valves;
   this->recipes = recipes;
-  this->recipeLength = recipeLength;
 }
 
 void DrinkMaker::MakeRecipe(short index)
 {
-  for (short i = 0; i < this->recipeLength; i++) {
-    short valveIndex = this->recipes[index * this->recipeLength + i];
+  Recipe recipe = recipes[index];
+   Serial.println(recipe.recipeLength);
+
+   
+  for (short i = 0; i < recipe.recipeLength; i++) {
+    short valveIndex =recipe.recipe[i];
+
+    Serial.print(valveIndex);
     
     if(valveIndex == -1)
     {

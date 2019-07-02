@@ -2,6 +2,7 @@
 #include <LiquidCrystal.h>
 #include "Valve.h"
 #include "DrinkMaker.h"
+#include "Recipe.h"
 using byte = signed byte;
 
 //////////PINS//////////
@@ -74,21 +75,17 @@ Valve valves[VALVES] =
   Valve(RELAY9, 100)
 };
 
-const short RECIPES_LENGTH = 4;
-const short RECIPES_COUNT = 10;
-short recipes[RECIPES_LENGTH * RECIPES_COUNT] = {
-  0, 2, 1, 3,
-  1, 3, 2, 3,
-  3, 2, 3, 1,
-  3, 3, 3, 1,
-  0, 2, -1, 0,
-  0, 2, 1, 3,
-  1, 3, 2, 3,
-  3, 2, 3, 1,
-  3, 3, 3, 1,
-  0, 2, -1, 0,
+const short RECIPES_COUNT = 3;
+short recipe1[5] = {0, 3, 1, 2, 4};
+short recipe2[3] = {0, 2, 3};
+short recipe3[3] = {3, 2, 1};
+
+Recipe recipes[ RECIPES_COUNT] = {
+  Recipe(recipe1, 5),
+  Recipe(recipe2, 3),
+  Recipe(recipe3, 3)
 };
-DrinkMaker maker = DrinkMaker(valves, RECIPES_LENGTH, recipes);
+DrinkMaker maker = DrinkMaker(valves, recipes);
 ///////////////////////////////////////////////
 
 
