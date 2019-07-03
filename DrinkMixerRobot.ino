@@ -13,23 +13,23 @@ using byte = signed byte;
 #define LCDPIN5 3
 #define LCDPIN6 2
 
-#define ROWPIN1 23
-#define ROWPIN2 25
-#define ROWPIN3 27
-#define ROWPIN4 29
-#define COLUMNPIN1 31
-#define COLUMNPIN2 33
-#define COLUMNPIN3 35
+#define ROWPIN1 22
+#define ROWPIN2 24
+#define ROWPIN3 26
+#define ROWPIN4 28
+#define COLUMNPIN1 30
+#define COLUMNPIN2 32
+#define COLUMNPIN3 34
 
-#define RELAY1 37
-#define RELAY2 39
-#define RELAY3 41
-#define RELAY4 43
-#define RELAY5 45
-#define RELAY6 47
-#define RELAY7 49
-#define RELAY8 51
-#define RELAY9 53
+#define RELAY1 23
+#define RELAY2 25
+#define RELAY3 27
+#define RELAY4 29
+#define RELAY5 31
+#define RELAY6 33
+#define RELAY7 35
+#define RELAY8 37
+#define RELAY9 39
 ////////////////////////
 
 ///////////KEYPAD//////////////////////////////
@@ -93,8 +93,9 @@ DrinkMaker maker = DrinkMaker(valves, recipes);
 
 LiquidCrystal lcd(LCDPIN1, LCDPIN2, LCDPIN3, LCDPIN4, LCDPIN5, LCDPIN6);
 const short errorDelay = 1000;
-const char* errorMessage = "INVALID RECIPE!";
 const char* standardMessage = "Select recipe:";
+const char* errorMessage = "INVALID RECIPE!";
+const char* preparingMessage = "Preparing.....";
 ///////////////////////////////////////////////
 
 void flashError()
@@ -103,6 +104,13 @@ void flashError()
   lcd.clear();
   lcd.print(errorMessage);
   delay(errorDelay);
+}
+
+void showPreparing()
+{
+  lcd.noBlink();
+  lcd.clear();
+  lcd.print(preparingMessage);
 }
 
 void showMenu(int number)
@@ -140,6 +148,7 @@ void loop()
           flashError();
         } else
         {
+          showPreparing();
           maker.MakeRecipe(currentSelectedRecipe - 1);
         }
         currentSelectedRecipe = 0;
