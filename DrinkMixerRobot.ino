@@ -6,8 +6,8 @@
 using byte = signed byte;
 
 //////////PINS//////////
-#define LCDPIN1 12
-#define LCDPIN2 11
+#define LCDPIN1 7
+#define LCDPIN2 6
 #define LCDPIN3 5
 #define LCDPIN4 4
 #define LCDPIN5 3
