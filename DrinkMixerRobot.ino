@@ -1,3 +1,5 @@
+#include <SD.h>
+#include <SPI.h>
 #include <Keypad.h>
 #include <LiquidCrystal.h>
 #include "Valve.h"
@@ -30,6 +32,8 @@ using byte = signed byte;
 #define RELAY7 35
 #define RELAY8 37
 #define RELAY9 39
+
+#define SDCSPIN 53
 ////////////////////////
 
 ///////////KEYPAD//////////////////////////////
@@ -85,6 +89,7 @@ Recipe recipes[ RECIPES_COUNT] = {
   Recipe(recipe2, 3),
   Recipe(recipe3, 3)
 };
+
 DrinkMaker maker = DrinkMaker(valves, recipes);
 ///////////////////////////////////////////////
 
@@ -94,15 +99,26 @@ DrinkMaker maker = DrinkMaker(valves, recipes);
 LiquidCrystal lcd(LCDPIN1, LCDPIN2, LCDPIN3, LCDPIN4, LCDPIN5, LCDPIN6);
 const short errorDelay = 1000;
 const char* standardMessage = "Select recipe:";
-const char* errorMessage = "INVALID RECIPE!";
+const char* invalidRecipeMessage = "INVALID RECIPE!";
 const char* preparingMessage = "Preparing.....";
+const char* invalidSDCardErrorMessage = "No SD card found";
+const char* restartMachineMessage = "Insert and reset";
 ///////////////////////////////////////////////
+
+
+///////////////////SD-CARD////////////////////
+const char* valveFileName = "valves.txt";
+const char* recipeFileName = "recipes.txt";
+File valveFile;
+File recipeFile;
+bool loadedSuccesfull = true;
+//////////////////////////////////////////////
 
 void flashError()
 {
   lcd.noBlink();
   lcd.clear();
-  lcd.print(errorMessage);
+  lcd.print(invalidRecipeMessage);
   delay(errorDelay);
 }
 
@@ -124,17 +140,81 @@ void showMenu(int number)
   lcd.blink();
 }
 
+void showSDCardError()
+{
+  lcd.clear();
+  lcd.print(invalidSDCardErrorMessage);
+  lcd.setCursor(0, 1);
+  lcd.print(restartMachineMessage);
+  lcd.noBlink();
+}
+
+void setupSDCard() {
+  if (!SD.begin())
+  {
+    Serial.println("SD card initialization failed");
+    showSDCardError();
+    loadedSuccesfull = false;
+    return;
+  }
+
+  if (!SD.exists(valveFileName))
+  {
+    valveFile = SD.open(valveFileName, FILE_WRITE);
+    valveFile.println("0: 100");
+    valveFile.println("1: 300");
+    valveFile.println("2: 500");
+    valveFile.println("3: 200");
+    valveFile.close();
+  }
+  if (!SD.exists(recipeFileName))
+  {
+    recipeFile = SD.open(recipeFileName, FILE_WRITE);
+    recipeFile.println("0: 1,3,2,1,4,3,1,2,1");
+    recipeFile.println("1: 1,3,2,3");
+    recipeFile.println("2: 3,1,1,2,3");
+    recipeFile.close();
+  }
+}
+
+void loadRecipes()
+{
+  valveFile = SD.open(valveFileName);
+  recipeFile = SD.open(recipeFileName);
+
+  if (valveFile) {
+    while (valveFile.available()) {
+      Serial.write(valveFile.read());
+    }
+    valveFile.close();
+  }
+
+  if (recipeFile) {
+    while (recipeFile.available()) {
+      Serial.write(recipeFile.read());
+    }
+    recipeFile.close();
+  }
+}
+
 void setup() {
   Serial.begin(9600);
-  // set up the LCD's number of columns and rows:
+  pinMode(SDCSPIN, OUTPUT);
   lcd.begin(16, 2);
-  // Print a message to the LCD.
+
+  setupSDCard();
+  loadRecipes();
+
   showMenu(0);
 }
 
 
 void loop()
 {
+  if (!loadedSuccesfull)
+  {
+    return;
+  }
 
   char key = kpd.getKey();
 
