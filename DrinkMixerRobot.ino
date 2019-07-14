@@ -65,39 +65,24 @@ int currentSelectedRecipe = 0;
 ///////////////////////////////////////////////
 
 /////////////////////RECIPES///////////////////
-const byte VALVES = 9;
-Valve valves[VALVES] =
-{
-  Valve(RELAY1, 100),
-  Valve(RELAY2, 100),
-  Valve(RELAY3, 500),
-  Valve(RELAY4, 100),
-  Valve(RELAY5, 100),
-  Valve(RELAY6, 100),
-  Valve(RELAY7, 100),
-  Valve(RELAY8, 100),
-  Valve(RELAY9, 100)
-};
+const byte VALVES_COUNT = 9;
+byte valvePins[VALVES_COUNT] = {RELAY1, RELAY2, RELAY3, RELAY4, RELAY5, RELAY6, RELAY7, RELAY8, RELAY9};
+Valve valves[VALVES_COUNT];
 
-const short RECIPES_COUNT = 3;
-short recipe1[5] = {0, 3, 1, 2, 4};
-short recipe2[3] = {0, 2, 3};
-short recipe3[3] = {3, 2, 1};
-
-Recipe recipes[ RECIPES_COUNT] = {
-  Recipe(recipe1, 5),
-  Recipe(recipe2, 3),
-  Recipe(recipe3, 3)
-};
+const short RECIPES_COUNT = 256;
+const short RECIPES_LENGTH = 32;
+Recipe recipes[ RECIPES_COUNT];
 
 DrinkMaker maker = DrinkMaker(valves, recipes);
 ///////////////////////////////////////////////
 
 
 /////////////////////LCD///////////////////////
-
 LiquidCrystal lcd(LCDPIN1, LCDPIN2, LCDPIN3, LCDPIN4, LCDPIN5, LCDPIN6);
+
 const short errorDelay = 1000;
+
+const char* startingMessage = "Starting...";
 const char* standardMessage = "Select recipe:";
 const char* invalidRecipeMessage = "INVALID RECIPE!";
 const char* preparingMessage = "Preparing.....";
@@ -122,6 +107,14 @@ void flashError()
   delay(errorDelay);
 }
 
+void showStarting()
+{
+  lcd.setCursor(0, 0);
+  lcd.clear();
+  lcd.print(startingMessage);
+  lcd.blink();
+}
+
 void showPreparing()
 {
   lcd.noBlink();
@@ -132,6 +125,7 @@ void showPreparing()
 void showMenu(int number)
 {
   lcd.clear();
+  lcd.setCursor(0, 0);
   lcd.print(standardMessage);
   lcd.setCursor(0, 1);
   if (number > 0) {
@@ -161,37 +155,92 @@ void setupSDCard() {
   if (!SD.exists(valveFileName))
   {
     valveFile = SD.open(valveFileName, FILE_WRITE);
-    valveFile.println("0: 100");
-    valveFile.println("1: 300");
-    valveFile.println("2: 500");
-    valveFile.println("3: 200");
+    valveFile.println("100");
+    valveFile.println("300");
+    valveFile.println("500");
+    valveFile.println("200");
     valveFile.close();
   }
   if (!SD.exists(recipeFileName))
   {
     recipeFile = SD.open(recipeFileName, FILE_WRITE);
-    recipeFile.println("0: 1,3,2,1,4,3,1,2,1");
-    recipeFile.println("1: 1,3,2,3");
-    recipeFile.println("2: 3,1,1,2,3");
+    recipeFile.println("1,3,2,1,4,3,1,2,1");
+    recipeFile.println("1,3,2,3");
+    recipeFile.println("3,1,1,2,3");
     recipeFile.close();
+  }
+}
+
+void loadValves()
+{
+  valveFile = SD.open(valveFileName);
+  int valveDelay = 0;
+  int valveIndex = 0;
+
+  if (valveFile) {
+    while (valveFile.available()) {
+      char c = valveFile.read();
+      int number = (c - '0');
+
+      if (c == '\n') {
+        Serial.println(valveDelay);
+
+        if (valveIndex < VALVES_COUNT) {
+          valves[valveIndex] = Valve(valvePins[valveIndex], valveDelay);
+          valveDelay = 0;
+          valveIndex++;
+        } else
+        {
+          break;
+        }
+      }
+      else if ( number  <= 9 || number >= 0)
+      {
+        valveDelay *= 10;
+        valveDelay += number;
+      }
+
+    }
+    valveFile.close();
   }
 }
 
 void loadRecipes()
 {
-  valveFile = SD.open(valveFileName);
   recipeFile = SD.open(recipeFileName);
-
-  if (valveFile) {
-    while (valveFile.available()) {
-      Serial.write(valveFile.read());
-    }
-    valveFile.close();
-  }
+  short recipeCount = 0;
+  short* recipe =  new short[RECIPES_LENGTH];
+  short recipeLength = 0;
+  short valveSelected = 0;
 
   if (recipeFile) {
     while (recipeFile.available()) {
-      Serial.write(recipeFile.read());
+      char c = recipeFile.read();
+      Serial.write(c);
+      int number = (c - '0');
+
+      if (c == '\n')
+      {
+        recipe[recipeLength] = valveSelected;
+        Recipe r = Recipe(recipe, recipeLength + 1);
+        recipes[recipeCount] = r;
+        recipeCount++;
+        recipe =  new short[RECIPES_LENGTH];
+        valveSelected = 0;
+        recipeLength = 0;
+
+      }
+      else if (c == ',')
+      {
+        recipe[recipeLength] = valveSelected;
+        recipeLength++;
+        valveSelected = 0;
+      }
+      else if ( number  <= 9 || number >= 0)
+      {
+        valveSelected *= 10;
+        valveSelected += number;
+      }
     }
     recipeFile.close();
   }
@@ -200,9 +249,13 @@ void loadRecipes()
 void setup() {
   Serial.begin(9600);
   pinMode(SDCSPIN, OUTPUT);
+
   lcd.begin(16, 2);
 
+  showStarting();
+
   setupSDCard();
+  loadValves();
   loadRecipes();
 
   showMenu(0);

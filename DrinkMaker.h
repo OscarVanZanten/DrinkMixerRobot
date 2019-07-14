@@ -6,13 +6,13 @@
 #include "Recipe.h"
 
 class DrinkMaker {
-private:
- Valve* valves;
- Recipe* recipes;
- 
-public:
- DrinkMaker(Valve valves[], Recipe recipes[]);
- void MakeRecipe(short index);
+  private:
+    Valve* valves;
+    Recipe* recipes;
+
+  public:
+    DrinkMaker(Valve valves[], Recipe recipes[]);
+    void MakeRecipe(short index);
 };
 
 DrinkMaker::DrinkMaker(Valve valves[], Recipe recipes[])
@@ -24,15 +24,16 @@ DrinkMaker::DrinkMaker(Valve valves[], Recipe recipes[])
 void DrinkMaker::MakeRecipe(short index)
 {
   Recipe recipe = recipes[index];
-   Serial.println(recipe.recipeLength);
 
-   
+  if (!recipe.enabled)
+  {
+    return;
+  }
+
   for (short i = 0; i < recipe.recipeLength; i++) {
-    short valveIndex =recipe.recipe[i];
+    short valveIndex = recipe.recipe[i];
 
-    Serial.print(valveIndex);
-    
-    if(valveIndex == -1)
+    if (valveIndex == -1)
     {
       break;
     }
