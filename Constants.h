@@ -1,5 +1,6 @@
 #ifndef Constants_H
 #define Constants_H
+#include <Arduino.h>
 
 //////////PINS//////////
 #define LCDPIN1 7
@@ -30,22 +31,24 @@
 #define SDCSPIN 53
 
 ///////////KEYPAD//////////////////////////////
-const byte ROWS = 4;
-const byte COLS = 3;
-byte rowPins[ROWS] =
+#define ROWSIZE 4
+#define COLUMNSIZE 3
+byte KEYPADROWS = ROWSIZE;
+byte KEYPADCOLS = COLUMNSIZE;
+byte rowPins[ROWSIZE] =
 {
   ROWPIN1,
   ROWPIN2,
   ROWPIN3,
   ROWPIN4
 };
-byte colPins[COLS] =
+byte colPins[COLUMNSIZE] =
 {
   COLUMNPIN1,
   COLUMNPIN2,
   COLUMNPIN3
 };
-char keys[ROWS][COLS] =
+char keys[ROWSIZE][COLUMNSIZE] =
 {
   {'1', '2', '3'},
   {'4', '5', '6'},
@@ -54,14 +57,21 @@ char keys[ROWS][COLS] =
 };
 
 /////////////////////RECIPES///////////////////
-const byte VALVES_COUNT = 9;
-byte VALVE_PINS[VALVES_COUNT] = {RELAY1, RELAY2, RELAY3, RELAY4, RELAY5, RELAY6, RELAY7, RELAY8, RELAY9};
-const short RECIPES_COUNT = 256;
-const short RECIPES_LENGTH = 32;
+const  byte VALVES_COUNT = 9;
+const  byte VALVE_PINS[VALVES_COUNT] = {RELAY1, RELAY2, RELAY3, RELAY4, RELAY5, RELAY6, RELAY7, RELAY8, RELAY9};
+const  short RECIPES_COUNT = 256;
+const  short RECIPES_LENGTH = 32;
 
 /////////////////////LCD///////////////////////
+#define MENU_SELECT_RECIPE 0
+#define MENU_SELECT_MENU 1
+#define MENU_VALVE_SELECT 2
+#define MENU_VALVE_EDIT 3
+#define MENU_RECIPE_DELETE 4
+#define MENU_RECIPE_ADD 5
+
 const short ERROR_DELAY = 1000;
-const char* STARTING_MESSAGE = "Starting...";
+const char* STARTING_MESSAGE ="Starting...";
 const char* STANDARD_MESSAGE = "Select recipe:";
 const char* INVALID_RECIPE_MESSAGE = "INVALID RECIPE!";
 const char* PREPARING_MESSAGE = "Preparing.....";

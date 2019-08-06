@@ -1,4 +1,6 @@
 #include "Constants.h"
+
+#include <Arduino.h>
 #include <SD.h>
 #include <SPI.h>
 #include <Keypad.h>
@@ -8,10 +10,10 @@
 #include "DrinkMaker.h"
 #include "Recipe.h"
 #include "LCD.h"
-using byte = signed byte;
+
 
 ///////////KEYPAD//////////////////////////////
-Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, KEYPADROWS, KEYPADCOLS );
 int currentSelectedRecipe = 0;
 
 /////////////////////RECIPES///////////////////
@@ -20,6 +22,7 @@ Recipe recipes[ RECIPES_COUNT];
 DrinkMaker maker = DrinkMaker(valves, recipes);
 
 /////////////////////LCD///////////////////////
+byte currentMenu = MENU_SELECT_RECIPE;
 LiquidCrystal lcdDisplay(LCDPIN1, LCDPIN2, LCDPIN3, LCDPIN4, LCDPIN5, LCDPIN6);
 LCD lcd(&lcdDisplay, ERROR_DELAY, STARTING_MESSAGE, STANDARD_MESSAGE, INVALID_RECIPE_MESSAGE, PREPARING_MESSAGE, INVALID_SD_CARD_MESSAGE, RESTART_MACHINE_MESSAGE);
 
@@ -29,7 +32,7 @@ Storage storage = Storage(&lcd, valves, recipes);
 void setup() {
   Serial.begin(9600);
   pinMode(SDCSPIN, OUTPUT);
-  
+
   lcdDisplay.begin(16, 2);
   lcd.showStarting();
 
@@ -40,7 +43,6 @@ void setup() {
   lcd.showMenu(0);
 }
 
-
 void loop()
 {
   if (!storage.loadedSuccesfull)
@@ -48,6 +50,27 @@ void loop()
     return;
   }
 
+  switch (currentMenu)
+  {
+    case MENU_SELECT_RECIPE:
+      selectRecipe();
+      break;
+    case MENU_SELECT_MENU:
+      selectMenu();
+      break;
+    case MENU_VALVE_SELECT:
+      break;
+    case MENU_VALVE_EDIT:
+      break;
+    case MENU_RECIPE_DELETE:
+      break;
+    case MENU_RECIPE_ADD:
+      break;
+  }
+}
+
+void selectRecipe()
+{
   char key = kpd.getKey();
 
   if (key) // Check for a valid key.
@@ -67,6 +90,11 @@ void loop()
         lcd.showMenu(currentSelectedRecipe);
         break;
       case '*':
+        if (currentSelectedRecipe == 0)
+        {
+          currentMenu = MENU_SELECT_MENU;
+          return;
+        }
         currentSelectedRecipe = 0;
         lcd.showMenu(currentSelectedRecipe);
         break;
@@ -82,8 +110,15 @@ void loop()
         }
 
         lcd.showMenu(currentSelectedRecipe);
-
         break;
     }
   }
+}
+
+void selectMenu()
+{
+  char key = kpd.getKey();
+ // lcd.showOptionMenu();
+  Serial.println("othermenu");
+  
 }

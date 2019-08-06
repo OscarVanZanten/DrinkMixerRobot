@@ -1,22 +1,24 @@
 #ifndef LCD_h
 #define LCD_h
+#include <Arduino.h>
 
 class LCD {
   private:
     LiquidCrystal* lcd;
     short errorDelay;
-    char* startingMessage ;
-    char* standardMessage;
-    char* invalidRecipeMessage ;
-    char* preparingMessage ;
-    char* invalidSDCardErrorMessage;
-    char* restartMachineMessage ;
+    const char* startingMessage ;
+    const char* standardMessage;
+    const char* invalidRecipeMessage ;
+    const char* preparingMessage ;
+    const char* invalidSDCardErrorMessage;
+    const char* restartMachineMessage ;
 
   public:
     void flashError();
     void showStarting();
     void showPreparing();
     void showMenu(int number);
+    //void showOptionMenu();
     void showSDCardError();
     LCD(LiquidCrystal* lcd, short errorDelay, const char* startingMessage, const char* standardMessage, const char* invalidRecipeMessage, const char* preparingMessage, const char* invalidSDCardErrorMessage, const char* restartMachineMessage);
 };
