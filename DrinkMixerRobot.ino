@@ -1,5 +1,4 @@
 #include "Constants.h"
-
 #include <Arduino.h>
 #include <SD.h>
 #include <SPI.h>

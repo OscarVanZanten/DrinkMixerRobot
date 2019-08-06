@@ -3,16 +3,14 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\SPI\\src",
-                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src",
-      
-                "C:\\Users\\InstaPizza\\Documents\\Arduino\\libraries\\Keypad",
-                "C:\\Program Files (x86)\\Arduino\\libraries\\LiquidCrystal\\src",
-                "C:\\Program Files (x86)\\Arduino\\libraries\\SD\\src",
-               
-                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
-                "C:\\Program Files (x86)\\Arduino\\tools\\**",
-                "${workspaceFolder}/**"
+            
+                "${workspaceFolder}\\includes\\tools\\**",
+                "${workspaceFolder}\\includes\\avr\\**",
+                "${workspaceFolder}\\includes\\LiquidCrystal\\src",
+                "${workspaceFolder}\\includes\\SD\\src",
+                "${workspaceFolder}\\includes\\Wire\\src",
+                "${workspaceFolder}\\includes\\SPI\\src",
+                "${workspaceFolder}\\includes\\Keypad"
             ],
             "defines": [
                 "_DEBUG",
