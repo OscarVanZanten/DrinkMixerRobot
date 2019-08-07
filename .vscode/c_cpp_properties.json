@@ -3,14 +3,15 @@
         {
             "name": "Win32",
             "includePath": [
-            
                 "${workspaceFolder}\\includes\\tools\\**",
                 "${workspaceFolder}\\includes\\avr\\**",
                 "${workspaceFolder}\\includes\\LiquidCrystal\\src",
                 "${workspaceFolder}\\includes\\SD\\src",
                 "${workspaceFolder}\\includes\\Wire\\src",
                 "${workspaceFolder}\\includes\\SPI\\src",
-                "${workspaceFolder}\\includes\\Keypad"
+                "${workspaceFolder}\\includes\\Keypad",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
+                "C:\\Program Files (x86)\\Arduino\\tools\\**"
             ],
             "defines": [
                 "_DEBUG",

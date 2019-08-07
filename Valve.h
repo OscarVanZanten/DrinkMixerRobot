@@ -6,8 +6,10 @@
 class Valve {
   private:
     byte pin;
-    short timing;
     bool enabled;
+  
+  public:
+    short timing;
 
   public:
     Valve();

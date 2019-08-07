@@ -59,7 +59,7 @@ char keys[ROWSIZE][COLUMNSIZE] =
 /////////////////////RECIPES///////////////////
 const  byte VALVES_COUNT = 9;
 const  byte VALVE_PINS[VALVES_COUNT] = {RELAY1, RELAY2, RELAY3, RELAY4, RELAY5, RELAY6, RELAY7, RELAY8, RELAY9};
-const  short RECIPES_COUNT = 256;
+const  short RECIPES_COUNT = 100;
 const  short RECIPES_LENGTH = 32;
 
 /////////////////////LCD///////////////////////
@@ -67,16 +67,23 @@ const  short RECIPES_LENGTH = 32;
 #define MENU_SELECT_MENU 1
 #define MENU_VALVE_SELECT 2
 #define MENU_VALVE_EDIT 3
-#define MENU_RECIPE_DELETE 4
-#define MENU_RECIPE_ADD 5
+#define MENU_RECIPE_SUBMENU 4
+#define MENU_RECIPE_DELETE 5
+#define MENU_RECIPE_ADD 6
 
 const short ERROR_DELAY = 1000;
-const char* STARTING_MESSAGE ="Starting...";
+const char* STARTING_MESSAGE = "Starting...";
 const char* STANDARD_MESSAGE = "Select recipe:";
 const char* INVALID_RECIPE_MESSAGE = "INVALID RECIPE!";
 const char* PREPARING_MESSAGE = "Preparing.....";
 const char* INVALID_SD_CARD_MESSAGE = "No SD card found";
 const char* RESTART_MACHINE_MESSAGE = "Insert and reset";
+const char* MENU_HEAD_MESSAGE = "Select option:";
+const char* MENU_OPTION_MESSAGE = "1:Valve 2:Recipe";
+const char* VALVE_SELECT_HEAD_MESSAGE = "Select valve:";
+const char* VALVE_SELECT_INVALID_MESSAGE = "INVALID VALVE!";
+const char* VALVE_EDIT_HEAD_MESSAGE = "Edit valve: ";
+const char* RECIPE_HEAD_MESSAGE = "Edit:   #:Back";
 
 ///////////////////SD-CARD////////////////////
 const char* VALVE_FILE_NAME = "valves.txt";
